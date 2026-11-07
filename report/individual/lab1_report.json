@@ -1,0 +1,127 @@
+{
+ "seed": 977,
+ "predictions": {
+  "ml_f1": {
+   "text": "F1 ~0.9, precision cao hơn recall vì các từ Spam có từ đặc trưng rất rõ.",
+   "time": "16:52:06"
+  },
+  "ml_lr": {
+   "text": "lr=0.001 thì loss ở mức ≈ 0,69 gần như không giảm, lr=50 thì loss vọt lên ngay từ các epoch đầu, dao động mạnh không hội tụ",
+   "time": "16:52:10"
+  },
+  "dl_curve": {
+   "text": "Không: train loss giảm mãi, val loss chạm đáy sau vài epoch rồi phẳng/nhích lên (overfit); MLP bằng hoặc hơi hơn logistic regression (F1 ~0.91–0.94 so với 0.904).",
+   "time": "16:52:21"
+  },
+  "dl_relu": {
+   "text": "Bỏ ReLU thì 2 Linear gộp thành 1 Linear (W₂W₁)x + b' = logistic regression (chỉ tham số hóa dư thừa); dự đoán F1 test ≈ 0.90–0.92, gần logistic regression (0.904) và bằng hoặc kém nhẹ so với MLP có ReLU (0.922), vì bag-of-words gần tách tuyến tính nên phi tuyến thêm được ít.",
+   "time": "16:52:27"
+  },
+  "emb_search": {
+   "text": "Dự đoán: top-6 gần như toàn spam (5–6/6) với cosine cao (~0.6–0.8), vì embedding bắt được nghĩa được chọn nhận kỳ nghỉ/quà miễn phí, trả lời để nhận dù query không có free/win/prize; còn số từ query có trong vocab BoW chỉ khoảng 5–8/14 và toàn từ thông dụng nên BoW gần như không thấy tín hiệu spam.",
+   "time": "16:54:16"
+  },
+  "emb_tricky": {
+   "text": "BoW đúng khoảng 3/6, Encoder + LogReg đúng khoảng 5/6",
+   "time": "16:55:22"
+  }
+ },
+ "checks": {
+  "1.1 vectorize": true,
+  "1.2 sigmoid / predict_proba": true,
+  "1.3 train_logreg": true,
+  "1.4 metrics": true,
+  "2.1 build_mlp": true,
+  "2.2 train_mlp": true,
+  "3.1–3.2 cosine / top_k_similar": true,
+  "3.3 knn_predict": true
+ },
+ "experiments": [
+  {
+   "key": "ml_f1",
+   "time": "16:52:06"
+  },
+  {
+   "key": "ml_lr",
+   "time": "16:52:10"
+  },
+  {
+   "key": "dl_curve",
+   "time": "16:52:21"
+  },
+  {
+   "key": "dl_relu",
+   "time": "16:52:27"
+  },
+  {
+   "key": "emb_search",
+   "time": "16:54:16"
+  },
+  {
+   "key": "emb_tricky",
+   "time": "16:55:22"
+  }
+ ],
+ "results": {
+  "1. BoW + LogReg (tự code)": {
+   "accuracy": 0.9780645161290322,
+   "precision": 0.975609756097561,
+   "recall": 0.8421052631578947,
+   "f1": 0.903954802259887,
+   "f1_SUB": 0.888888888888889,
+   "train_s": 3.181270666000273,
+   "msg_per_s": 44696.62698231901,
+   "p50_ms": 0.06181150092743337,
+   "p95_ms": 0.09590690060576883,
+   "usd_per_1k": 0.0
+  },
+  "2. BoW + MLP (deep learning)": {
+   "accuracy": 0.9819354838709677,
+   "precision": 0.9764705882352941,
+   "recall": 0.8736842105263158,
+   "f1": 0.9222222222222223,
+   "f1_SUB": 0.9189189189189189,
+   "train_s": 5.697660370000449,
+   "msg_per_s": 30964.749730401207,
+   "p50_ms": 0.16674250036885496,
+   "p95_ms": 0.2615704510390058,
+   "usd_per_1k": 0.0
+  },
+  "3a. Encoder (MiniLM) + kNN": {
+   "accuracy": 0.9651612903225807,
+   "precision": 0.8333333333333334,
+   "recall": 0.8947368421052632,
+   "f1": 0.8629441624365481,
+   "f1_SUB": 1.0,
+   "train_s": 67.17044853400148,
+   "msg_per_s": 30.388408549077756,
+   "p50_ms": 51.1263409998719,
+   "p95_ms": 74.89907084927836,
+   "usd_per_1k": 0.0
+  },
+  "3b. Encoder (MiniLM) + LogReg": {
+   "accuracy": 0.9870967741935484,
+   "precision": 0.956989247311828,
+   "recall": 0.9368421052631579,
+   "f1": 0.946808510638298,
+   "f1_SUB": 0.9743589743589743,
+   "train_s": 67.74626631400133,
+   "msg_per_s": 47.40807756082971,
+   "p50_ms": 29.77921799993055,
+   "p95_ms": 40.742866849814156,
+   "usd_per_1k": 0.0
+  },
+  "3c. Encoder (MiniLM) + MLP head": {
+   "accuracy": 0.9896774193548387,
+   "precision": 0.9578947368421052,
+   "recall": 0.9578947368421052,
+   "f1": 0.9578947368421052,
+   "f1_SUB": 1.0,
+   "train_s": 68.68794712600175,
+   "msg_per_s": 45.803098653734644,
+   "p50_ms": 30.807834500592435,
+   "p95_ms": 42.758104500353504,
+   "usd_per_1k": 0.0
+  }
+ }
+}
